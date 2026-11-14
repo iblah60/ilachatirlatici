@@ -19,12 +19,14 @@ jobs:
           sudo apt-get install -y fdroidserver default-jdk-headless wget
       - name: Initialize F-Droid Repo and Download Release APK
         run: |
-          mkdir -p fdroid/repo
-          cd fdroid
+          mkdir -p site/fdroid/repo
+          cd site/fdroid
           fdroid init
+          echo "repo_url: https://iblah60.github.io/ilachatirlatici/fdroid/repo" >> config.yml
+          echo "repo_name: Sesli Ilac Asistani Repo" >> config.yml
           wget -P repo/ https://github.com/iblah60/ilachatirlatici/releases/download/v1.0/Sesli-Ilac-Asistani-v1.0.apk
-          fdroid update --create-metadata
+          fdroid update --create-metadata --use-date-from-apk
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: fdroid/repo
+          path: site
       - uses: actions/deploy-pages@v4
