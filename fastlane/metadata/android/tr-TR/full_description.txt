@@ -1,0 +1,3 @@
+Sesli İlaç Asistanı, internet bağlantısına ihtiyaç duymadan tamamen cihazınızda çalışan açık kaynaklı bir ilaç hatırlatıcıdır.
+
+İki farklı ilacı gün aşırı dönüşümlü olarak (1. gün birinci ilaç, 2. gün ikinci ilaç) belirlediğiniz saatte Türkçe sesli bildirimle hatırlatır. Hiçbir kişisel veri toplamaz, reklam içermez ve arka planda güvenilir şekilde çalışır.
