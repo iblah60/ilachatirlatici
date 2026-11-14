@@ -13,13 +13,15 @@ jobs:
   build-repo:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Install fdroidserver and dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y fdroidserver default-jdk-headless wget
-      - name: Initialize F-Droid Repo and Download Release APK
+      - name: Initialize F-Droid Repo and Copy Fastlane Metadata
         run: |
-          mkdir -p site/fdroid/repo
+          mkdir -p site/fdroid/repo site/fdroid/metadata/com.ibo.ilachatirlatici/tr-TR
+          cp -r fastlane/metadata/android/tr-TR/* site/fdroid/metadata/com.ibo.ilachatirlatici/tr-TR/
           cd site/fdroid
           fdroid init
           echo "repo_url: https://iblah60.github.io/ilachatirlatici/fdroid/repo" >> config.yml
