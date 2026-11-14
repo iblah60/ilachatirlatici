@@ -13,13 +13,18 @@ jobs:
   build-repo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Generate F-Droid Repository
-        uses: brianreumere/fdroid-repo-action@v1
-        with:
-          repo-name: "Sesli İlaç Asistanı Repo"
-          repo-description: "iblah60 resmi F-Droid deposu"
+      - name: Install fdroidserver and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fdroidserver default-jdk-headless wget
+      - name: Initialize F-Droid Repo and Download Release APK
+        run: |
+          mkdir -p fdroid/repo
+          cd fdroid
+          fdroid init
+          wget -P repo/ https://github.com/iblah60/ilachatirlatici/releases/download/v1.0/Sesli-Ilac-Asistani-v1.0.apk
+          fdroid update --create-metadata
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: repo
+          path: fdroid/repo
       - uses: actions/deploy-pages@v4
