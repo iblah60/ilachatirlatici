@@ -17,7 +17,7 @@ jobs:
       - name: Install fdroidserver and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y fdroidserver default-jdk-headless wget
+          sudo apt-get install -y fdroidserver default-jdk-headless wget curl jq
       - name: Initialize F-Droid Repo with Persistent Keystore
         env:
           KEYSTORE_B64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
@@ -27,7 +27,8 @@ jobs:
           cd site/fdroid
           echo "$KEYSTORE_B64" | tr -d '[:space:]' | base64 -d > keystore.p12
           printf "repo_url: https://iblah60.github.io/ilachatirlatici/fdroid/repo\nrepo_name: Sesli Ilac Asistani Repo\nrepo_description: iblah60 resmi F-Droid deposu\nkeystore: keystore.p12\nkeystorepass: sifre12345\nkeypass: sifre12345\nrepo_keyalias: fdroidrepo\n" > config.yml
-          wget -P repo/ https://github.com/iblah60/ilachatirlatici/releases/download/v1.0/Sesli-Ilac-Asistani-v1.0.apk
+          APK_URL=$(curl -s https://api.github.com/repos/iblah60/ilachatirlatici/releases/latest | jq -r '.assets[] | select(.name | endswith(".apk")) | .browser_download_url' | head -n 1)
+          wget -P repo/ "$APK_URL"
           fdroid update --create-metadata --use-date-from-apk
       - uses: actions/upload-pages-artifact@v3
         with:
