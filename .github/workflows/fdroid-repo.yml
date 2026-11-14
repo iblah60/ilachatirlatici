@@ -11,7 +11,49 @@ permissions:
 
 jobs:
   build-repo:
+    runs-on: ubuntu-latestname: Build F-Droid Repo
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-repo:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install fdroidserver and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fdroidserver default-jdk-headless wget
+      - name: Initialize F-Droid Repo with Persistent Keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
+        run: |
+          mkdir -p site/fdroid/repo site/fdroid/metadata/com.ibo.ilachatirlatici/tr-TR
+          cp -r fastlane/metadata/android/tr-TR/* site/fdroid/metadata/com.ibo.ilachatirlatici/tr-TR/
+          cd site/fdroid
+          echo "$KEYSTORE_B64" | base64 -d > keystore.p12
+          cat <<EOF > config.yml
+          repo_url: https://iblah60.github.io/ilachatirlatici/fdroid/repo
+          repo_name: Sesli Ilac Asistani Repo
+          repo_description: iblah60 resmi F-Droid deposu
+          keystore: keystore.p12
+          keystorepass: sifre12345
+          keypass: sifre12345
+          repo_keyalias: fdroidrepo
+          EOF
+          wget -P repo/ https://github.com/iblah60/ilachatirlatici/releases/download/v1.0/Sesli-Ilac-Asistani-v1.0.apk
+          fdroid update --create-metadata --use-date-from-apk
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - uses: actions/deploy-pages@v4
     steps:
       - uses: actions/checkout@v4
       - name: Install fdroidserver and dependencies
