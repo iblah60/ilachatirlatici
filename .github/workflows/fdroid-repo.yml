@@ -24,10 +24,12 @@ jobs:
         run: |
           mkdir -p site/fdroid/repo site/fdroid/metadata/com.ibo.ilachatirlatici/tr-TR
           cp -r fastlane/metadata/android/tr-TR/* site/fdroid/metadata/com.ibo.ilachatirlatici/tr-TR/
+          cp fastlane/metadata/android/tr-TR/images/icon.png site/fdroid/repo/icon.png || true
           cd site/fdroid
           echo "$KEYSTORE_B64" | tr -d '[:space:]' | base64 -d > keystore.p12
-          printf "repo_url: https://iblah60.github.io/ilachatirlatici/fdroid/repo\nrepo_name: Sesli Ilac Asistani Repo\nrepo_description: iblah60 resmi F-Droid deposu\nkeystore: keystore.p12\nkeystorepass: sifre12345\nkeypass: sifre12345\nrepo_keyalias: fdroidrepo\n" > config.yml
-          APK_URL=$(curl -s https://api.github.com/repos/iblah60/ilachatirlatici/releases/latest | jq -r '.assets[] | select(.name | endswith(".apk")) | .browser_download_url' | head -n 1)
+          printf "repo_url: https://iblah60.github.io/ilachatirlatici/fdroid/repo\nrepo_name: Sesli Ilac Asistani Repo\nrepo_description: iblah60 resmi F-Droid deposu\nrepo_icon: icon.png\nkeystore: keystore.p12\nkeystorepass: sifre12345\nkeypass: sifre12345\nrepo_keyalias: fdroidrepo\n" > config.yml
+          APK_URL=$(curl -s https://api.github.com/repos/iblah60/ilachatirlatici/releases | jq -r '[.[] | select(.draft == false) | .assets[] | select(.name | endswith(".apk"))][0].browser_download_url')
+          echo "Downloading APK: $APK_URL"
           wget -P repo/ "$APK_URL"
           fdroid update --create-metadata --use-date-from-apk
       - uses: actions/upload-pages-artifact@v3
